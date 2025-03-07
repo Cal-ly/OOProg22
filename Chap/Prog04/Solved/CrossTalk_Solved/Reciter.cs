@@ -1,33 +1,31 @@
-﻿
-public class Reciter
+﻿namespace CrossTalk;
+
+public static class Reciter
 {
-    private static Random _rng = new Random();
+    private readonly static Random _rng = new();
 
     /// <summary>
     /// Recites a set of lists of words.
     /// </summary>
-    public static void ReciteAllTheWords()
+    public static Task ReciteAllTheWords()
     {
-        List<string> danish = new List<string> { "En", "To", "Tre", "Fire", "Fem", "Seks", "Syv", "Otte" };
-        List<string> english = new List<string> { "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight" };
-        List<string> german = new List<string> { "Eins", "Zwei", "Drei", "Vier", "Funf", "Sechs", "Sieben", "Acht" };
+        string[] danish = ["En", "To", "Tre", "Fire", "Fem", "Seks", "Syv", "Otte"];
+        string[] english = ["One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight"];
+        string[] german = ["Eins", "Zwei", "Drei", "Vier", "Funf", "Sechs", "Sieben", "Acht"];
 
         // Wrap each call of Recite into a separate Task object.
-        Task t1 = new Task(() => { Recite(danish); });
-        Task t2 = new Task(() => { Recite(english); });
-        Task t3 = new Task(() => { Recite(german); });
+        Task t1 = Task.Run(() => Recite(danish));
+        Task t2 = Task.Run(() => Recite(english));
+        Task t3 = Task.Run(() => Recite(german));
 
-        // Start the tasks. The tasks will now execute in parallel.
-        t1.Start();
-        t2.Start();
-        t3.Start();
+        return Task.WhenAll(t1, t2, t3);
     }
 
     /// <summary>
     /// Recites (i.e. prints on screen with a bit of delay
     /// between each line) the provided list of strings.
     /// </summary>
-    public static void Recite(List<string> words)
+    public static void Recite(string[] words)
     {
         foreach (string s in words)
         {
